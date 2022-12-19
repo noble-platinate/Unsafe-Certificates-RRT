@@ -8,7 +8,7 @@ if __name__ == "__main__":
 
     s_time = time.time()
 
-    f = open('config.json',)
+    f = open('/Users/akshatanshnayak/Desktop/Unsafe-Certificates-RRT/individual/config.json',)
     
     data = json.load(f)
     
@@ -36,9 +36,9 @@ if __name__ == "__main__":
 
     map = Map(height, width, step_size, start_pose, goal_pose)
 
-    map.show_edges = show_edges
-    map.show_sample = show_sample
-    map.show_ellipse = show_ellipse
+    map.show_edges = 1
+    map.show_sample = 1
+    map.show_ellipse = 1
 
     map.set_node_cost(map.start)
 
@@ -59,7 +59,7 @@ if __name__ == "__main__":
         if(map.solution_found):
             map.c_best = map.x_soln.sort()[0]
         
-        x_rand = map.sample(start_pose,goal_pose,10)
+        x_rand = map.sample()
 
         nearest_node_found, x_nearest, cost = map.nearest_node(x_rand)
 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
         if(map.collision_free(x_nearest, x_new)):
             x_new.parent = x_nearest
             x_new.cost = x_new.parent.cost + cost_new
-            map.nodes.append(x_new)
+            map.freenodes.append(x_new)
 
             edge.node_1 = x_new
             edge.node_2 = x_nearest
@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
     map.goal.parent = x_new
     map.goal.cost = x_new.cost + map.euclidean_distance(x_new,map.goal)
-    map.nodes.append(map.goal)
+    map.freenodes.append(map.goal)
     cost_final = map.euclidean_distance(x_new,map.goal)
     final_edge = Edge(x_new, map.goal, cost_final)
     map.edges.append(final_edge)
