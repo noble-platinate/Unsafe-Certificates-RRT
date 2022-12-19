@@ -1,8 +1,10 @@
 import numpy as np
 import cv2
-from map import *
+from map_safe import *
+# from map_unsafe import *
 import time
 import json
+import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
 
@@ -44,7 +46,7 @@ if __name__ == "__main__":
 
     if(generate_random_map):
         for i in range(num_random_obstacles):
-            map.add_obstacle(random.randint(0,width - rand_obstacle_size), random.randint(0,height - rand_obstacle_size), random.randint(0,rand_obstacle_size), random.randint(0,rand_obstacle_size), clearance)
+            map.add_obstacle(random.randint(2,width - rand_obstacle_size-2), random.randint(2,height - rand_obstacle_size-2), random.randint(2,rand_obstacle_size-2), random.randint(2,rand_obstacle_size-2), clearance)
     else:
         for i in range(0,width,40):
             for j in range(0,height,40):
@@ -54,6 +56,8 @@ if __name__ == "__main__":
 
     map.display_map(x_new)
 
+    certificate_check_times=[]
+    normal_collision_check_times=[]
     while(map.euclidean_distance(x_new,map.goal) > map.step_size):
 
         if(map.solution_found):
@@ -73,6 +77,8 @@ if __name__ == "__main__":
         edge = Edge(x_new, x_nearest, cost_new)
         
         if(map.collision_free(x_nearest, x_new)):
+            certificate_check_times.append(map.normal_collision_check_times)
+            normal_collision_check_times.append(map.safety_cert_check_times)
             x_new.parent = x_nearest
             x_new.cost = x_new.parent.cost + cost_new
             map.freenodes.append(x_new)
@@ -98,3 +104,14 @@ if __name__ == "__main__":
 
     map.display_map(x_rand,best_path_found=True)
     cv2.waitKey(0)
+    
+    x=[]
+    print(len(certificate_check_times))
+    for i in range(len(certificate_check_times)):
+        x.append(i+1)
+
+    plt.plot(x, certificate_check_times, color='tab:blue')
+    plt.plot(x, normal_collision_check_times, color='tab:orange')
+
+    # display the plot
+    plt.show()
