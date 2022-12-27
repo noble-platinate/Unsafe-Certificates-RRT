@@ -39,8 +39,6 @@ class Map:
         self.obstacle_list = []
         self.obstacle_list_padding=[]
         self.obstacle_tree=None
-        self.nonobstacle_list = []
-        self.nonobstacle_tree = None
         self.freenodes = [start]
         self.nodes = [self.start]
         self.obstaclenodes = []
@@ -61,8 +59,6 @@ class Map:
         self.safety_certificates_centers = []
         self.safety_certificates_radius = {}
         self.certifier_of = {}
-        self.normal_collision_check_times=0
-        self.safety_cert_check_times=0
         
     def add_obstacle(self,x,y,width,height,clearance):
         flag = 1
@@ -93,7 +89,6 @@ class Map:
         img = cv2.circle(
             img, (self.goal.x, self.goal.y), 5, (0, 0, 255), -1)
 
-        
         for node in self.nodes:
             path = []
             while(node is not None):
@@ -108,18 +103,7 @@ class Map:
         for obstacle in self.obstacle_list:
             img[obstacle[0], obstacle[1]] = (0, 0, 0)
 
-        map1 = img.copy()
-
-        for safety_certi in self.safety_certificates_centers:
-            map2 = map1.copy()
-            x,y = safety_certi
-            radius = self.safety_certificates_radius[(x,y)]
-            cv2.circle(map2, (x, y),
-                       int(radius), (100, 0, 10), -1)
-            map1=cv2.addWeighted(
-                map2, 0.4, map1, 1 - 0.4, 0)
-
-        cv2.imshow("self.map", map1)
+        cv2.imshow("self.map", img)
         cv2.waitKey(1)
 
         return 1
@@ -185,24 +169,6 @@ class Map:
             node_cost = node.parent.cost + self.euclidean_distance(node,node.parent)
         return node_cost
 
-    def safety_certified(self,node):
-        self.safety_cert_check_times+=1
-        if (len(self.safety_certificates_centers)>0):
-            k=min(len(self.safety_certificates_centers),5)
-            tree = KDTree(self.safety_certificates_centers)
-            dist,node_near_idx=tree.query([[node.x,node.y]], k)
-
-            for idx in range(k):
-                node_near=Node(self.safety_certificates_centers[node_near_idx[0][idx]][0],
-                               self.safety_certificates_centers[node_near_idx[0][idx]][1])
-                
-                rad = self.safety_certificates_radius[(node_near.x,node_near.y)]
-                if (dist[0][idx] <= rad):
-                    self.certifier_of[(node.x,node.y)] = (node_near.x,node_near.y)
-                    return node_near
-            
-        return None
-
     def normal_collision_check(self,node):
         dist, node_near_idx = self.obstacle_tree.query(
             [[node.y, node.x]], k=1)
@@ -216,30 +182,20 @@ class Map:
             return True
 
     def collision_free(self, x):
-        
-        if(self.safety_certified(x)==None):
-            if(self.normal_collision_check(x)==True):
-                return 0
-            else:
-                return 1
+        if (self.normal_collision_check(x) == True):
+            return 0
         else:
             return 1
 
     def path_free(self, x_nearest, x_new, resolution = 0.1):
-        safety_node = self.certifier_of[(x_nearest.x, x_nearest.y)]
-        
-        if(self.euclidean_distance(x_nearest,x_new)<=self.safety_certificates_radius[safety_node]):
-            return 1
-        else:
-            parts = int(1/resolution)
-            for i in range(1, parts):
-                section_x = int((x_nearest.x*i + x_new.x*(parts-i))/parts)
-                section_y = int((x_nearest.y*i + x_new.y*(parts-i))/parts)
-                node_temp = Node(section_x, section_y)
-                self.normal_collision_check_times += 1
-                dist, node_near_idx = self.obstacle_tree.query(
-                    [[node_temp.y, node_temp.x]], k=1)
+        parts = int(1/resolution)
+        for i in range(1, parts):
+            section_x = int((x_nearest.x*i + x_new.x*(parts-i))/parts)
+            section_y = int((x_nearest.y*i + x_new.y*(parts-i))/parts)
+            node_temp = Node(section_x, section_y)
+            dist, node_near_idx = self.obstacle_tree.query(
+                [[node_temp.y, node_temp.x]], k=1)
 
-                if (dist[0][0] == 0):
-                    return 0
+            if (dist[0][0] == 0):
+                return 0
         return 1
