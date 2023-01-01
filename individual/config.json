@@ -19,7 +19,7 @@
             "show_ellipse": 1,
             "threshold_cost": 0,
             "generate_random_map": 1,
-            "num_random_obstacles": 50,
+            "num_random_obstacles": 20,
             "rand_obstacle_size": 150,
             "clearance": 12,
             "final_path_only": 0

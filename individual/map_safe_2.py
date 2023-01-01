@@ -241,10 +241,5 @@ class Map:
                     [[node_temp.y, node_temp.x]], k=1)
 
                 if (dist[0][0] == 0):
-                    try:
-                        return prev_node
-                    except:
-                        return 0
-
-                prev_node = node_temp
+                    return 0
         return 1

@@ -107,7 +107,7 @@ class Map:
                 node_1 = (path[i].x, path[i].y)
                 node_2 = (path[i+1].x, path[i+1].y)
                 if (self.show_edges):
-                    img = cv2.line(img, node_1, node_2, (255, 0, 0), 1)
+                    img = cv2.line(img, node_1, node_2, (255, 0, 0), 2)
 
         for obstacle in self.obstacle_list:
             img[obstacle[0], obstacle[1]] = (0, 0, 0)
@@ -214,7 +214,7 @@ class Map:
     
     def unsafety_certified(self, node):
         if (len(self.unsafety_certificates_centers) > 0):
-            k = min(len(self.unsafety_certificates_centers), 5)
+            k = min(len(self.unsafety_certificates_centers), 10)
             tree = KDTree(self.unsafety_certificates_centers)
             dist, node_near_idx = tree.query([[node.x, node.y]], k)
 
@@ -274,5 +274,10 @@ class Map:
                     [[node_temp.y, node_temp.x]], k=1)
 
                 if (dist[0][0] == 0):
-                    return 0
+                    try:
+                        return prev_node
+                    except:
+                        return 0
+
+                prev_node = node_temp
         return 1
