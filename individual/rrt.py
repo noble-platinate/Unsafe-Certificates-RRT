@@ -3,6 +3,7 @@ import cv2
 import map_normal
 import map_safe
 import map_unsafe
+import map_safe_2
 import random
 import time
 import json
@@ -26,12 +27,14 @@ def add_obstacle(x,y,width,height,clearance,start,goal):
                 map.obstacle_list.append((j, i))
                 map1.obstacle_list.append((j, i))
                 map2.obstacle_list.append((j, i))
+                map3.obstacle_list.append((j, i))
 
         for i in range(x-2, x+width+2):
             for j in range(y-2, y+height+2):
                 map.obstacle_list_padding.append((j, i))
                 map1.obstacle_list_padding.append((j, i))
                 map2.obstacle_list_padding.append((j, i))
+                map3.obstacle_list_padding.append((j, i))
 
 
 if __name__ == "__main__":
@@ -67,10 +70,13 @@ if __name__ == "__main__":
     map = map_normal.Map(height, width, step_size, start_pose, goal_pose)
     map1 = map_safe.Map(height, width, step_size, start_pose, goal_pose)
     map2 = map_unsafe.Map(height, width, step_size, start_pose, goal_pose)
+    map3 = map_safe_2.Map(height, width, step_size, start_pose, goal_pose)
+
 
     map.set_node_cost(map.start)
     map1.set_node_cost(map1.start)
     map2.set_node_cost(map2.start)
+    map3.set_node_cost(map3.start)
 
     if(generate_random_map):
         for i in range(num_random_obstacles):
@@ -80,8 +86,7 @@ if __name__ == "__main__":
             for j in range(0,height,40):
                 add_obstacle(i,j,20,20)
     
-    map.obstacle_tree = map1.obstacle_tree = map2.obstacle_tree=KDTree(
-        map.obstacle_list_padding)
+    map.obstacle_tree = map1.obstacle_tree = map3.obstacle_tree = map2.obstacle_tree = KDTree(map.obstacle_list_padding)
 
     map2.nonobstacle_list = list(set([(x,y) for x in range(height) for y in range(width)])-set(map2.obstacle_list))
     map2.nonobstacle_tree = KDTree(map2.nonobstacle_list)
@@ -89,13 +94,13 @@ if __name__ == "__main__":
     def code(map):
         x_new = map_safe.Node(map.start.x,map.start.y)
 
-        map.display_map()
+        # map.display_map()
         
         time_list=[]
 
         initial_time=0
         num_iter=0
-        while (num_iter < 1000):
+        while (num_iter < 100000):
         #while(map.euclidean_distance(x_new,map.goal) > 100):
 
             # if(map.solution_found):
@@ -140,14 +145,15 @@ if __name__ == "__main__":
                                 edge.cost = cost_new
 
                                 map.edges.append(edge)
+            curr_seconds = time.time()
 
             num_iter+=1
-
-            curr_seconds=time.time()
+            # print(num_iter)
+            
             initial_time=initial_time+curr_seconds-seconds
             time_list.append(initial_time)
 
-            map.display_map()
+            #map.display_map()
 
         # map.solution_found = True
 
@@ -162,21 +168,23 @@ if __name__ == "__main__":
         # map.display_map(x_rand)
 
         # map.display_map(x_rand,best_path_found=True)
-        cv2.waitKey(0)
+        # cv2.waitKey(0)
 
         return time_list
     
     time_list_norm=code(map)
     time_list_safe=code(map1)
     time_list_unsafe=code(map2)
+    time_list_safe_2=code(map3)
 
     x=[]
     length = min(len(time_list_norm), len(time_list_safe), len(time_list_unsafe))
     for i in range(length):
         x.append(i+1)
 
-    plt.plot(x, time_list_safe[0:length], color='tab:red')
-    plt.plot(x, time_list_norm[0:length], color='tab:blue')
+    plt.plot(x, time_list_norm[0:length], color='tab:red')
+    plt.plot(x, time_list_safe[0:length], color='tab:blue')
     plt.plot(x, time_list_unsafe[0:length], color='tab:green')
+    plt.plot(x, time_list_safe_2[0:length], color='tab:orange')
     # display the plot
     plt.show()
