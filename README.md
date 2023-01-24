@@ -1,4 +1,4 @@
-# A Comparative Study of Sampling-based Planners
+# A Comparative Study of Collision-Checking Algorithm in Sampling-Based Planners
 ## Introduction
 This is a Python package which demonstrates the difference in performance between collision-checking algorithms in the sampling-based planning algorithm RRT.
 ## Setting up the package
