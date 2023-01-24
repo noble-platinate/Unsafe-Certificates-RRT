@@ -28,5 +28,6 @@ python3 rrt.py
 <p float="left">
     <img src="media/all.png" width = "400" height = "370"><br>
     Red line: Normal RRT, Orange line: RRT with safety certificates, Blue line: RRT with safety+unsafety certificates, Green line: RRT with safety+unsafety certificates level 2
+    <br>
 </p>
 Above are the results for a run on a randomly generated 1000x1000 obstacle map, step size = 12px, and search radius = 17px. It demonstrates number of iterations vs total time taken.
