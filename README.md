@@ -16,6 +16,11 @@ pip3 install opencv-python
 cd individual
 python3 rrt.py
 ```
+
+## Simulation
+
+https://user-images.githubusercontent.com/64150934/214223041-3ade6d13-b487-4ff3-9dec-66a204539678.mp4
+
 ## Sample Results
 <p float="left">
     <img src="media/normal.png" width = "265" height = "265">
