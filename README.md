@@ -18,15 +18,15 @@ python3 rrt.py
 ```
 ## Sample Results
 <p float="left">
-    <img src="media/rrt_normal.png" width = "265" height = "265">
-    <img src="media/rrt_safety_cert.png" width = "265" height = "265">
-    <img src="media/rrt_usafety_cert.png" width = "265" height = "265">
-    <img src="media/rrt_safety_cert_level2.png" width = "265" height = "265">
+    <img src="media/normal.png" width = "265" height = "265">
+    <img src="media/rrt_safe.png" width = "265" height = "265">
+    <img src="media/rrt_unsafe.png" width = "265" height = "265">
 </p>
-(left to right) RRT with normal collision checking, RRT with safety certificates, RRT with safety+unsafety certificates, RRT with safety certificates level 2
+(left to right) RRT with normal collision checking, RRT with safety certificates, RRT with safety+unsafety certificates
 
 ### Comparison Results
 <p float="left">
-    <img src="compare/plots/times.png" width = "400" height = "370">
+    <img src="all.png" width = "400" height = "370">
+    Red line: Normal RRT, Orange line: RRT with safety certificates, Blue line: RRT with safety+unsafety certificates, Green line: RRT with safety+unsafety certificates level 2
 </p>
-Above are the results for a run on a randomly generated 1000x1000 obstacle map, step size = 12px, and search radius = 17px. 
+Above are the results for a run on a randomly generated 1000x1000 obstacle map, step size = 12px, and search radius = 17px. It demonstrates number of iterations vs total time taken.

@@ -1,8 +1,8 @@
 {
     "parameters": [
         {
-            "height": 1000,
-            "width": 1000,
+            "height": 1200,
+            "width": 1200,
             "start_pose": [
                 100,
                 100

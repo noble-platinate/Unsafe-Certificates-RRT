@@ -153,7 +153,7 @@ if __name__ == "__main__":
             initial_time=initial_time+curr_seconds-seconds
             time_list.append(initial_time)
 
-            #map.display_map()
+            map.display_map()
 
         # map.solution_found = True
 
@@ -172,7 +172,7 @@ if __name__ == "__main__":
 
         return time_list
     
-    time_list_norm=code(map)
+    time_list_norm=code(map3)
     time_list_safe=code(map1)
     time_list_unsafe=code(map2)
     time_list_safe_2=code(map3)
